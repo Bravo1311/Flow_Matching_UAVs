@@ -1,0 +1,7 @@
+venv/
+mujoco_menagerie/
+data/episodes/
+models/
+__pycache__/
+*.pyc
+.vscode/
