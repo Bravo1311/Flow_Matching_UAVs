@@ -5,31 +5,45 @@ from model.flow_matching_v1.config import *
 import torch
 from torch.utils.data import Dataset
 
+def load_and_split_episodes(data_dir, val_fractions=0.1, seed=0):
+    import random
+    filenames = sorted(f for f in os.listdir(data_dir) if f.endswith(".json"))
+    rng = random.Random(seed)
+    rng.shuffle(filenames)
+    val_count = int(len(filenames) * val_fractions)
+    val_files = filenames[:val_count]
+    train_files = filenames[val_count:]
+
+    def load(files):
+        # returns a list of all steps grouped episode-wise.
+        # [ep1:steps, ep2:steps, ...]
+        episodes = []
+        for fname in files:
+            with open(os.path.join(data_dir, fname)) as f:
+                episodes.append(json.load(f)["steps"])
+        return episodes
+
+    return load(train_files), load(val_files)
+
 class LandingDataset(Dataset):
     """
         Loads all episode JSON filesand builds a flat list of (ep_inx, ts_idx) pairs - one entry per valid training example
     """
-    def __init__(self, data_dir=DATA_DIR, history_len=HISTORY_LEN, chunk_len=CHUNK_LEN):
+    def __init__(self,episode_steps_list, history_len=HISTORY_LEN, chunk_len=CHUNK_LEN):
         self.history_len = history_len   # including current time t
         self.chunk_len = chunk_len
-        self.episodes = []   # will hold parsed episode data
+        self.episodes = episode_steps_list
         self.index = []     # list of (ep_idx, t)
 
-        filenames = sorted(f for f in os.listdir(data_dir) if f.endswith(".json"))
-        for ep_idx, fname in enumerate(filenames):
-            with open(os.path.join(data_dir, fname)) as f:
-                ep = json.load(f)
-            steps = ep["steps"]
-            self.episodes.append(steps)
-
+        for ep_idx, steps in enumerate(self.episodes):
             T = len(steps)
-            # valid t range:[history_len -1, T - chunk_len]
-            for t in range(self.history_len -1, T - self.chunk_len):
+            for t in range(self.history_len - 1, T - self.chunk_len):
                 self.index.append((ep_idx, t))
 
     def __len__(self):
         return len(self.index)
 
+    # fetches the pose history and action chunks at a given index
     def __getitem__(self, idx):
         ep_idx, t = self.index[idx]
         steps = self.episodes[ep_idx]

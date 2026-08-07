@@ -72,7 +72,8 @@ class DiTBlock(nn.Module):
         )
 
     def forward(self, x, cond):
-        # x: (B, seq_len, d_model), cond: (B, cond_dim)
+        # x: (B, seq_len, d_model) -> encoded action tensor
+        # cond: (B, cond_dim)
         h = self.norm1(x, cond)
         attn_out, _ = self.attn(h, h, h)  # self-attention: query = key = value = h
         x = x + attn_out     # residual connection
