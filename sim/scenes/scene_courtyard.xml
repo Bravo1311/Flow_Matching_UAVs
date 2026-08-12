@@ -1,0 +1,47 @@
+<mujoco model="scene_courtyard">
+  <!--
+    Scene 2/3 — Courtyard / outdoor open.
+    Skybox + grass/concrete ground texture, sparse props, longer sightlines.
+    This is the scene where the front-facing-only camera's horizon/background
+    matters most — no walls boxing the skybox out of frame, so the vision
+    head has to learn to ignore open sky rather than key off it.
+
+    Same include pattern as scene_warehouse.xml:
+      <mujoco>
+        <include file="scenes/scene_courtyard.xml"/>
+        <include file="skydio_x2.xml"/>
+        <include file="target_body.xml"/>
+      </mujoco>
+  -->
+
+  <include file="common_assets.xml"/>
+
+  <option gravity="0 0 -9.81"/>
+
+  <visual>
+    <headlight ambient="0.4 0.4 0.4" diffuse="0.55 0.55 0.5" specular="0.15 0.15 0.15"/>
+    <rgba haze="0.75 0.82 0.9 1"/>
+    <map fogstart="15" fogend="45"/>
+  </visual>
+
+  <worldbody>
+    <light name="sun" pos="6 -6 10" dir="-0.5 0.5 -1" diffuse="0.9 0.88 0.8" specular="0.25 0.25 0.2" castshadow="true"/>
+    <light name="sky_fill" pos="-6 6 8" dir="0.4 -0.4 -1" diffuse="0.25 0.28 0.32" castshadow="false"/>
+
+    <!-- Ground: mixed grass field with a concrete patio patch near center -->
+    <geom name="ground_grass" type="plane" size="35 35 0.1" material="mat_grass" pos="0 0 0"/>
+    <geom name="patio" type="box" size="6 6 0.02" pos="0 0 0.01" material="mat_concrete"/>
+
+    <!-- Sparse props: low planters / blocks, spaced far apart for long sightlines -->
+    <geom name="planter_01" type="box" size="0.4 0.4 0.35" pos="4 3 0.35" material="mat_concrete_block"/>
+    <geom name="planter_02" type="box" size="0.4 0.4 0.35" pos="-5 -2 0.35" material="mat_concrete_block"/>
+    <geom name="planter_03" type="box" size="0.4 0.4 0.35" pos="2 -6 0.35" material="mat_concrete_block"/>
+    <geom name="bench_01" type="box" size="0.9 0.3 0.25" pos="-3 4 0.25" material="mat_crate"/>
+
+    <!-- A couple of taller, distant landmarks for long-range parallax,
+         placed near the edge of the usable flight volume: visual reference
+         only, not clutter meant to be avoided -->
+    <geom name="landmark_tower_01" type="cylinder" size="0.5 6" pos="15 10 6" material="mat_concrete_block"/>
+    <geom name="landmark_tower_02" type="cylinder" size="0.5 5" pos="-14 -12 5" material="mat_concrete_block"/>
+  </worldbody>
+</mujoco>

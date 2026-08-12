@@ -1,0 +1,5 @@
+<mujoco model="following_env_warehouse_preview">
+  <include file="/mnt/ubuntu-data/AI_Projects/flow_matching_uavs/sim/scenes/scene_warehouse.xml"/>
+  <include file="/mnt/ubuntu-data/AI_Projects/flow_matching_uavs/sim/assets/skydio_x2.xml"/>
+  <include file="/mnt/ubuntu-data/AI_Projects/flow_matching_uavs/sim/assets/target_body.xml"/>
+</mujoco>

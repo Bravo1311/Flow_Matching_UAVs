@@ -1,0 +1,59 @@
+<mujoco model="target_body_include">
+  <!--
+    Ground target body carrying the AprilTag, for the following-task scenes.
+
+    1. Freejoint body: this target needs to MOVE (following a moving ground
+       target), driven by a scripted trajectory in your episode-collection
+       script.
+
+    2. Real AprilTag: tag36h11 family (DICT_APRILTAG_36h11 via cv2.aruco),
+       id=0, generated with cv2.aruco.generateImageMarker, saved to
+       sim/assets/textures/apriltag_36h11_id0.png (RGB, not grayscale).
+
+    3. Texture path is relative to this file's own directory (sim/assets/),
+       confirmed working directly.
+
+    4. Texture mapping: plate stays a plain, mass-carrying geom; a separate
+       thin, massless, collision-free geom on top carries the tag texture
+       ("sign on a box" pattern), so the tag doesn't smear across all 6
+       faces of the structural plate.
+
+    5. CONFIRMED ROOT CAUSE of the "blob, not a tag" rendering bug (verified
+       by systematic offscreen rendering across many isolated variables:
+       thickness, z-position, freejoint vs static body, body-wrapper vs
+       direct worldbody placement, all ruled out one at a time). The
+       actual cause is texuniform="true" on the material. With texuniform
+       true, texture repetition is computed from real-world geometry size
+       rather than plain [0,1] UV space, and this broke rendering into a
+       flat half-black/half-white split under several conditions. Removing
+       it (MuJoCo default is false, which uses standard per-face [0,1] UV
+       mapping) fixed it consistently across every test configuration.
+       texrepeat is left at default (also "1 1") for the same reason.
+  -->
+
+  <asset>
+    <texture name="tex_apriltag" type="2d"
+              file="textures/apriltag_36h11_id0.png"/>
+    <material name="mat_apriltag" texture="tex_apriltag" reflectance="0.0"
+              specular="0.0"/>
+    <material name="mat_plate" rgba="0.15 0.15 0.15 1" reflectance="0.0"/>
+  </asset>
+
+  <worldbody>
+    <body name="ground_target" pos="0 0 0.02">
+      <freejoint name="target_free"/>
+      <!-- structural plate: carries mass, has collision, plain dark material -->
+      <geom name="target_plate" type="box" size="0.5 0.5 0.01"
+            material="mat_plate" mass="1.0"/>
+      <!-- tag face: thin, massless, collision-free; exists only to carry
+           the tag texture on top of the structural plate. Thickness/
+           position aren't the issue (see note 5); kept modest anyway. -->
+      <geom name="target_tag_face" type="box" size="0.5 0.5 0.001"
+            pos="0 0 0.012" material="mat_apriltag" mass="0"
+            contype="0" conaffinity="0"/>
+      <!-- site for cheap ground-truth pose logging during data collection,
+           independent of whatever the vision pipeline detects -->
+      <site name="target_site" pos="0 0 0.014" size="0.01"/>
+    </body>
+  </worldbody>
+</mujoco>

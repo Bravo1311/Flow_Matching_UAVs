@@ -42,7 +42,7 @@ class AdaLN(nn.Module):
 
         # weights shape: 2*d_model, cond_dim.     (reversed order): x * W.T
         self.proj = nn.Linear(cond_dim, 2 * d_model) 
-
+z
     def forward(self, x, cond):
         # x: (B, seq_len, d_model), cond: (B, cond_dim)
         gamma, beta = self.proj(cond).chunk(2, dim = -1)  # each (B, d_model)

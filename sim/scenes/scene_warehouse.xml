@@ -1,0 +1,58 @@
+<mujoco model="scene_warehouse">
+  <!--
+    Scene 1/3 — Warehouse / indoor.
+    Flat textured floor + wall panels at moderate distance (strong horizon line,
+    parallax cues for the front-facing pitching camera) + static crate clutter.
+
+    Usage: this file expects the Skydio X2 body and the target body/AprilTag
+    to be included separately (keep robot/target defs out of scene files so
+    scenes stay swappable). Include pattern:
+
+      <mujoco>
+        <include file="scenes/scene_warehouse.xml"/>
+        <include file="skydio_x2.xml"/>
+        <include file="target_body.xml"/>
+      </mujoco>
+
+    Adjust to match however common_assets.xml / skydio_x2.xml are actually
+    pathed in your repo once dropped in.
+  -->
+
+  <include file="common_assets.xml"/>
+
+  <option gravity="0 0 -9.81"/>
+
+  <visual>
+    <headlight ambient="0.35 0.35 0.35" diffuse="0.5 0.5 0.5" specular="0.1 0.1 0.1"/>
+    <rgba haze="0.6 0.6 0.65 1"/>
+  </visual>
+
+  <worldbody>
+    <!-- Lighting: randomize pos/dir per episode at reset via scene_loader.py -->
+    <light name="key_light" pos="4 -3 6" dir="-0.4 0.3 -1" diffuse="0.8 0.8 0.75" specular="0.2 0.2 0.2" castshadow="true"/>
+    <light name="fill_light" pos="-4 4 5" dir="0.3 -0.3 -1" diffuse="0.3 0.3 0.32" castshadow="false"/>
+
+    <!-- Floor -->
+    <geom name="floor" type="plane" size="25 25 0.1" material="mat_floor_checker" pos="0 0 0"/>
+
+    <!-- Walls: 4 panels forming a loose warehouse boundary, far enough apart
+         to give the drone room to follow without early clipping -->
+    <geom name="wall_north" type="box" size="20 0.15 4" pos="0 20 4" material="mat_wall"/>
+    <geom name="wall_south" type="box" size="20 0.15 4" pos="0 -20 4" material="mat_wall"/>
+    <geom name="wall_east"  type="box" size="0.15 20 4" pos="20 0 4" material="mat_wall"/>
+    <geom name="wall_west"  type="box" size="0.15 20 4" pos="-20 0 4" material="mat_wall"/>
+
+    <!-- Static crate clutter — scattered, varied heights, gives the vision
+         head non-trivial mid-ground geometry to key off besides the tag -->
+    <geom name="crate_01" type="box" size="0.5 0.5 0.5" pos="3 2 0.5" material="mat_crate"/>
+    <geom name="crate_02" type="box" size="0.4 0.4 0.8" pos="-2.5 4 0.8" material="mat_crate"/>
+    <geom name="crate_03" type="box" size="0.6 0.6 0.6" pos="5 -3 0.6" material="mat_crate"/>
+    <geom name="crate_04" type="box" size="0.4 0.4 0.4" pos="-4 -2 0.4" material="mat_crate"/>
+    <geom name="crate_05" type="box" size="0.5 0.9 0.5" pos="1 6 0.5" material="mat_crate"/>
+    <geom name="crate_stack_a" type="box" size="0.45 0.45 0.45" pos="3.2 2 1.4" material="mat_crate"/>
+
+    <!-- Concrete block pillars for stronger vertical parallax at distance -->
+    <geom name="pillar_01" type="cylinder" size="0.3 2.5" pos="8 6 2.5" material="mat_concrete_block"/>
+    <geom name="pillar_02" type="cylinder" size="0.3 2.5" pos="-7 -6 2.5" material="mat_concrete_block"/>
+  </worldbody>
+</mujoco>

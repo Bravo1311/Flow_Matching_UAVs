@@ -1,0 +1,58 @@
+<mujoco model="scene_urban">
+  <!--
+    Scene 3/3 — Urban / cluttered.
+    Denser box/prop placement mimicking a street or courtyard with obstacles,
+    tighter spacing than warehouse/courtyard on purpose: this scene is meant
+    to introduce real occlusion risk for the tag (props tall/wide enough to
+    briefly block line-of-sight during a following maneuver) and denser
+    mid-ground clutter for the vision head. Intended as the hardest of the 3,
+    to be used only once modes are validated on scene_warehouse / scene_courtyard.
+
+    Same include pattern:
+      <mujoco>
+        <include file="scenes/scene_urban.xml"/>
+        <include file="skydio_x2.xml"/>
+        <include file="target_body.xml"/>
+      </mujoco>
+  -->
+
+  <include file="common_assets.xml"/>
+
+  <option gravity="0 0 -9.81"/>
+
+  <visual>
+    <headlight ambient="0.3 0.3 0.32" diffuse="0.45 0.45 0.42" specular="0.1 0.1 0.1"/>
+    <rgba haze="0.55 0.55 0.58 1"/>
+  </visual>
+
+  <worldbody>
+    <light name="key_light" pos="5 -4 7" dir="-0.4 0.35 -1" diffuse="0.75 0.72 0.65" specular="0.2 0.2 0.2" castshadow="true"/>
+    <light name="fill_light" pos="-5 3 6" dir="0.4 -0.25 -1" diffuse="0.28 0.28 0.3" castshadow="false"/>
+
+    <geom name="street_floor" type="plane" size="30 30 0.1" material="mat_concrete" pos="0 0 0"/>
+
+    <!-- Building-like blocks lining two rough "street" edges, closer spacing
+         than warehouse walls -> real occlusion risk during following -->
+    <geom name="building_01" type="box" size="1.5 4 3" pos="6 5 3" material="mat_wall"/>
+    <geom name="building_02" type="box" size="1.5 3 4" pos="6 -3 4" material="mat_wall"/>
+    <geom name="building_03" type="box" size="2 3.5 2.5" pos="-6 4 2.5" material="mat_wall"/>
+    <geom name="building_04" type="box" size="1.2 2.5 3.5" pos="-6 -4 3.5" material="mat_wall"/>
+
+    <!-- Dense low/mid clutter between the "buildings": deliberately closer
+         together than the other 2 scenes -->
+    <geom name="crate_01" type="box" size="0.4 0.4 0.4" pos="2 2 0.4" material="mat_crate"/>
+    <geom name="crate_02" type="box" size="0.4 0.4 0.6" pos="2.8 1.2 0.6" material="mat_crate"/>
+    <geom name="crate_03" type="box" size="0.35 0.35 0.35" pos="-2 1.5 0.35" material="mat_crate"/>
+    <geom name="crate_04" type="box" size="0.5 0.5 0.5" pos="-1.5 -2 0.5" material="mat_crate"/>
+    <geom name="crate_05" type="box" size="0.4 0.4 0.9" pos="1 -2.5 0.9" material="mat_crate"/>
+    <geom name="crate_06" type="box" size="0.45 0.45 0.45" pos="3 -1 0.45" material="mat_crate"/>
+    <geom name="barrier_01" type="box" size="1.2 0.15 0.6" pos="0 3 0.6" material="mat_concrete_block"/>
+    <geom name="barrier_02" type="box" size="1.2 0.15 0.6" pos="0 -3 0.6" material="mat_concrete_block"/>
+
+    <!-- A couple of overhanging elements at moderate height: tag-occlusion
+         hazard if the drone follows too close to a building edge, which is
+         exactly the robustness case this scene is for -->
+    <geom name="overhang_01" type="box" size="0.8 0.6 0.2" pos="4.5 5 5.5" material="mat_wall"/>
+    <geom name="overhang_02" type="box" size="0.8 0.6 0.2" pos="-4.5 4 4.5" material="mat_wall"/>
+  </worldbody>
+</mujoco>

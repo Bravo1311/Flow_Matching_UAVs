@@ -1,0 +1,50 @@
+<mujoco model="common_assets">
+  <!--
+    Shared visual asset library for the Phase 1 following-policy scenes.
+    Include this file at the top of each scene_*.xml via:
+      <include file="common_assets.xml"/>
+    All textures are MuJoCo procedural builtins (checker/noise/gradient) —
+    no external asset licensing, safe for a public repo.
+  -->
+
+  <asset>
+    <!-- Skybox: gradient sky, shared by outdoor-facing scenes -->
+    <texture name="sky_gradient" type="skybox" builtin="gradient"
+             rgb1="0.45 0.62 0.85" rgb2="0.9 0.95 1.0" width="512" height="512"/>
+
+    <!-- Ground textures -->
+    <texture name="floor_checker" type="2d" builtin="checker"
+              rgb1="0.55 0.55 0.58" rgb2="0.35 0.35 0.38"
+              width="512" height="512" mark="edge" markrgb="0.2 0.2 0.2"/>
+    <material name="mat_floor_checker" texture="floor_checker"
+              texrepeat="12 12" reflectance="0.05" specular="0.1" shininess="0.05"/>
+
+    <texture name="ground_concrete" type="2d" builtin="flat" rgb1="0.56 0.55 0.53"
+              width="512" height="512"/>
+    <material name="mat_concrete" texture="ground_concrete"
+              texrepeat="10 10" reflectance="0.03" specular="0.05" shininess="0.02"/>
+
+    <texture name="ground_grass" type="2d" builtin="checker" rgb1="0.22 0.4 0.16" rgb2="0.26 0.44 0.18"
+              width="256" height="256"/>
+    <material name="mat_grass" texture="ground_grass"
+              texrepeat="24 24" reflectance="0.0" specular="0.02" shininess="0.01"/>
+
+    <!-- Wall / panel texture (warehouse interior) -->
+    <texture name="wall_panel" type="2d" builtin="flat" rgb1="0.78 0.76 0.72"
+              width="256" height="256"/>
+    <material name="mat_wall" texture="wall_panel" texrepeat="4 2"
+              reflectance="0.02" specular="0.05" shininess="0.02"/>
+
+    <!-- Crate / prop textures -->
+    <texture name="crate_wood" type="2d" builtin="checker" rgb1="0.55 0.38 0.22" rgb2="0.42 0.28 0.16"
+              width="128" height="128" mark="cross" markrgb="0.3 0.2 0.1"/>
+    <material name="mat_crate" texture="crate_wood" texrepeat="2 2"
+              reflectance="0.02" specular="0.1" shininess="0.05"/>
+
+    <material name="mat_concrete_block" rgba="0.62 0.6 0.58 1" reflectance="0.03"/>
+  </asset>
+
+  <!-- Reusable clutter prop bodies. Include and instantiate via <body> refs per-scene
+       (kept here as commented templates since MJCF bodies aren't includable as
+       standalone reusable defs the way assets are — copy the pattern per scene). -->
+</mujoco>

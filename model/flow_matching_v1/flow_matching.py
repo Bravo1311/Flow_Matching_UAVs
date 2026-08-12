@@ -26,4 +26,4 @@ def flow_matching_loss(model, action_chunk, history):
     # --- predict velocity, compute loss ---
     predicted_velocity = model(xt, t, history)   # (B, C, action_dim)
     loss = torch.mean((predicted_velocity - target_velocity) ** 2)
-    return loss
+    return loss 

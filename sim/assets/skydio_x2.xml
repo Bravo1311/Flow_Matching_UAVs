@@ -1,0 +1,51 @@
+<mujoco model="skydio_x2_include">
+  <!--
+    This is a THIN WRAPPER, not a re-derivation of the drone body.
+
+    I don't have your actual landing-project Skydio X2 MJCF (mass, inertia,
+    rotor placement, actuator defs, velocity-lag params) in my context here:
+    only summaries of the conversation that built it. Rather than guess at
+    those numbers and risk silently drifting from the physics you already
+    validated closed-loop in Gazebo/PX4 SITL, point this file at your real one.
+
+    CONFIRMED: mujoco_menagerie lives inside flow_matching_following/, and
+    you load `mujoco_menagerie/skydio_x2/scene.xml` directly today. Critical
+    detail: scene.xml is NOT a bare robot body: it bundles its own
+    <worldbody> with a skybox, checkered groundplane, a directional light,
+    and a static landing_marker box. Including scene.xml here would collide
+    with the scenes already built (two floors, two lights, a leftover
+    landing-project marker that isn't the moving AprilTag target Phase 1
+    needs).
+
+    So this wrapper includes x2.xml directly instead: that's the bare
+    actuated robot body scene.xml itself includes, without the competing
+    worldbody. This should compose cleanly with scene_warehouse/courtyard/
+    urban.xml, each of which defines its own floor/lights/skybox.
+
+    Camera note, still open: I don't have x2.xml's contents, so I can't
+    confirm whether it already defines a camera site, and if so, what it's
+    mounted/oriented as. Phase 1 needs a front-facing, pitch-only camera
+    (no yaw toward target, per your correction earlier). If x2.xml has no
+    camera defined, or has one mounted differently, that needs adding/fixing
+    here; flagged as open below rather than guessed.
+  -->
+
+  <include file="../../mujoco_menagerie/skydio_x2/x2.xml"/>
+
+  <!--
+    If your landing project's drone body does NOT already define a pitching
+    camera site/joint (likely true, since landing used a fixed overhead-ish
+    view per earlier discussion), add a hinge joint for camera pitch here,
+    e.g.:
+
+      <body name="camera_mount" pos="0.1 0 -0.02">
+        <joint name="camera_pitch" type="hinge" axis="0 1 0"
+               range="-90 10" damping="0.5"/>
+        <camera name="front_cam" mode="fixed" fovy="90"/>
+      </body>
+
+    as a child of the drone base body; adjust pos/range once we see the
+    actual body tree. Left unimplemented here since it depends on the real
+    body structure I don't have visibility into yet.
+  -->
+</mujoco>
