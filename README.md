@@ -1,6 +1,13 @@
-# Flow-Matching Landing Policy for a Simulated Drone
+# Flow-Matching Landing Policy for a Simulated Drone - Phase 2 (Under Development)
+A from scratch pipeline that trains a **DiT-style conditional flow-matching transformer** to imitate classical **PD controllers**, covering two tasks: **precision landing** and **target following** using an AprilTag-based target with an actively steered camera. Synthetic data is generated in a simplified **MuJoCo** quadrotor simulation. This Phase includes a vision layer that conditions the following policy directly on camera frames rather than privileged pose. Built as a scoped proof-of-concept, not a production system. Every simplification below is deliberate and documented.
 
-A from-scratch pipeline that trains a **Diffusion Transformer-style conditional flow-matching transformer** to imitate a classical **PD landing controller**, using synthetic data generated in a simplified **MuJoCo** quadrotor simulation. Built as a scoped proof-of-concept, not a production system. Every simplification below is deliberate and documented.
+
+-------------------------
+
+
+# Flow-Matching Landing Policy for a Simulated Drone - Phase 1
+
+A from-scratch pipeline that trains a **Diffusion Transformer-style conditional flow-matching transformer** to imitate classical **PD landing controller**, using synthetic data generated in a simplified **MuJoCo** quadrotor simulation. Built as a scoped proof-of-concept, not a production system. Every simplification below is deliberate and documented.
 
 ## Motivation
 
